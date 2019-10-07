@@ -3,23 +3,15 @@ const app = express()
 const path = require('path')
 const port = 3031
 
-app.use(express.static('./public'));
-app.use(express.static('./public/assets'));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname + '/public/index.html'))
-  })
-
-
-  app.get('/hire-me.html', (req, res) => {
-    res.sendFile(path.join(__dirname + '/public/hire-me.html'))
-  })
- 
- 
-  app.get('/projects-grid-cards.html', (req, res) => {
-    res.sendFile(path.join(__dirname + '/public/projects-grid-cards.html'))
-  })
-
+const template = require('./utils/template')
+  app.get('/', template.index)
+  app.get('/:file',template.index)
+  
+  app.use((err, req, res, next) => {
+    if (!err) return next();
+    return res.status(404).send('Caminho Não existe')
+  });
+  app.use('/', express.static(path.resolve(__dirname, 'public/assets')));
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`)
